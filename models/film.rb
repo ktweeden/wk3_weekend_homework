@@ -1,8 +1,8 @@
 require_relative('../db/sql_runner.rb')
 
 class Film
-  attr_reader :title, :price, :id
-  attr_writer :title
+  attr_reader :id
+  attr_accessor :title, :price
   def initialize(options)
     @id = options['id'].to_i if options['id']
     @title = options['title']
@@ -21,7 +21,7 @@ class Film
     RETURNING *;
     "
     values = [@title, @price]
-    @id = SqlRunner.run(sql, values).first['id']
+    @id = SqlRunner.run(sql, values).first['id'].to_i
   end
 
   def update
@@ -37,8 +37,34 @@ class Film
     SqlRunner.run(sql, values)
   end
 
+  def customers
+    sql = "SELECT * FROM customers
+    INNER JOIN tickets ON tickets.film_id = $1
+    WHERE tickets.customer_id = customers.id;"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    results.map {|customer| Customer.new(customer)}
+  end
+
+  def number_of_customers_viewing
+    customers.count
+  end
+
+  def self.delete_by_id(id)
+    sql = "DELETE FROM films WHERE id = $1"
+    values = [id]
+    SqlRunner.run(sql, values)
+  end
+
   def self.delete_all
     sql = "DELETE FROM films"
     SqlRunner.run(sql)
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM films WHERE id = $1"
+    values = [id]
+    result = SqlRunner.run(sql, values).first
+    Film.new(result)
   end
 end
