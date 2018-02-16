@@ -5,7 +5,7 @@ class SqlRunner
     begin
       db = PG.connect({dbname: 'code_clan_cinema', host: 'localhost'})
       db.prepare('query', sql)
-      result = db.exec_prepared('quary', values)
+      result = db.exec_prepared('query', values)
     ensure
       db.close
     end
