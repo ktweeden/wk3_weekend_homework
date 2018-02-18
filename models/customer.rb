@@ -50,15 +50,29 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
+  # FIRST ATTEMPT
+  #
+  # def films
+  #   sql = "
+  #   SELECT * FROM films
+  #   WHERE id = $1;"
+  #   films = screenings.map do |screening|
+  #     film = SqlRunner.run(sql, [screening.film_id]).first
+  #     Film.new(film)
+  #   end
+  #   films.uniq {|film| film.id}
+  # end
+
   def films
-    sql = "
-    SELECT * FROM films
-    WHERE id = $1;"
-    films = screenings.map do |screening|
-      film = SqlRunner.run(sql, [screening.film_id]).first
-      Film.new(film)
-    end
-    films.uniq {|film| film.id}
+    sql = "SELECT * FROM films
+    INNER JOIN tickets ON tickets.customer_id = $1
+    INNER JOIN screenings ON screenings.film_id = films.id
+    WHERE tickets.screening_id = screenings.id;
+    "
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    result_map = results.map {|film| Film.new(film)}
+    result_map.uniq {|film| film.id}
   end
 
   def screenings

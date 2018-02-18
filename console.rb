@@ -15,9 +15,9 @@ customers = [
   Customer.new({'name' => 'Paul', 'funds' => '60'}),
   Customer.new({'name' => 'Jane', 'funds' => '40'}),
   Customer.new({'name' => 'Dan', 'funds' => '30'}),
-  Customer.new({'name' => 'Jack', 'funds' => '20'}),
+  Customer.new({'name' => 'Jack', 'funds' => '200'}),
   Customer.new({'name' => 'Ada', 'funds' => '40'}),
-  Customer.new({'name' => 'Andy', 'funds' => '25'})
+  Customer.new({'name' => 'Andy', 'funds' => '100'})
 ]
 
 films = [
@@ -68,6 +68,7 @@ screenings.each {|screening| screening.save}
 tickets = [
   Ticket.new({'customer_id' => customers[0].id, 'screening_id' => screenings[7].id}),
   Ticket.new({'customer_id' => customers[1].id, 'screening_id' => screenings[6].id}),
+  Ticket.new({'customer_id' => customers[1].id, 'screening_id' => screenings[6].id}),
   Ticket.new({'customer_id' => customers[2].id, 'screening_id' => screenings[7].id}),
   Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[4].id}),
   Ticket.new({'customer_id' => customers[4].id, 'screening_id' => screenings[3].id}),
@@ -93,7 +94,15 @@ tickets = [
   Ticket.new({'customer_id' => customers[2].id, 'screening_id' => screenings[2].id}),
   Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[11].id}),
   Ticket.new({'customer_id' => customers[7].id, 'screening_id' => screenings[16].id}),
-  Ticket.new({'customer_id' => customers[0].id, 'screening_id' => screenings[20].id})
+  Ticket.new({'customer_id' => customers[0].id, 'screening_id' => screenings[20].id}),
+  Ticket.new({'customer_id' => customers[7].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[7].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[7].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[7].id, 'screening_id' => screenings[5].id}),
+  Ticket.new({'customer_id' => customers[5].id, 'screening_id' => screenings[5].id})
 ]
 
 tickets.each {|ticket| ticket.save}

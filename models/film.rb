@@ -37,18 +37,42 @@ class Film
     SqlRunner.run(sql, values)
   end
 
-  # def customers
-  #   sql = "SELECT * FROM customers
-  #   INNER JOIN tickets ON tickets.film_id = $1
-  #   WHERE tickets.customer_id = customers.id;"
-  #   values = [@id]
-  #   results = SqlRunner.run(sql, values)
-  #   results.map {|customer| Customer.new(customer)}
-  # end
+  def customers
+    sql = "
+    SELECT * FROM customers
+    INNER JOIN screenings ON screenings.film_id = $1
+    INNER JOIN tickets ON tickets.customer_id = customers.id
+    WHERE tickets.screening_id = screenings.id;
+    "
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    results.map  {|customer| Customer.new(customer)}
+  end
 
-  # def number_of_customers_viewing
-  #   customers.count
-  # end
+  def number_of_customers_viewing
+    customers.count
+  end
+
+  def screenings
+    sql = "
+    SELECT * FROM screenings
+    WHERE film_id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    results.map {|screening| Screening.new(screening)}
+  end
+
+  def most_popular_screening
+    most_tickets = 0
+    current_highest = {}
+    screenings.each do |screening|
+      if screening.number_of_tickets_bought > most_tickets
+        current_highest = screening
+        most_tickets = screening.number_of_tickets_bought
+      end
+      return current_highest
+    end
+  end
 
   def self.delete_by_id(id)
     sql = "DELETE FROM films WHERE id = $1;"
