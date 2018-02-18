@@ -25,8 +25,20 @@ class Screening
     @id = SqlRunner.run(sql, values).first['id'].to_i
   end
 
+  def self.find_by_id(id)
+    sql = "SELECT * FROM screenings WHERE id = $1"
+    values = [id]
+    result = SqlRunner.run(sql, values).first
+    Screening.new(result)
+  end
+
+  def self.find_film_by_screening_id(id)
+    film_id = Screening.find_by_id(id).film_id
+    Film.find_by_id(film_id)
+  end
+
   def self.delete_all
-    sql = "DELETE FROM screenings"
+    sql = "DELETE FROM screenings;"
     SqlRunner.run(sql)
   end
 end

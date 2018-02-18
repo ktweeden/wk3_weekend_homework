@@ -53,19 +53,31 @@ class Customer
   def films
     sql = "
     SELECT * FROM films
-    INNER JOIN tickets ON tickets.customer_id = $1
-    WHERE tickets.film_id = films.id;"
-    values = [@id]
-    results = SqlRunner.run(sql, values)
-    results.map {|film| Film.new(film)}
+    WHERE id = $1;"
+    films = screenings.map do |screening|
+      film = SqlRunner.run(sql, [screening.film_id]).first
+      Film.new(film)
+    end
+    films.uniq {|film| film.id}
+  end
+
+  def screenings
+    sql = "
+      SELECT * FROM screenings
+      INNER JOIN tickets ON tickets.customer_id = $1
+      WHERE tickets.screening_id = screenings.id;"
+      values = [@id]
+      results = SqlRunner.run(sql, values)
+      results.map {|screening| Screening.new(screening)}
   end
 
   def number_of_tickets_bought
-    films.count
+    screenings.count
   end
 
-
-  # CLASS METHODS
+  def number_of_film_seen
+    films.count
+  end
 
   def self.find_by_id(id)
     sql = "SELECT * FROM customers WHERE id = $1;"
