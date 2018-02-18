@@ -50,7 +50,7 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
-  # FIRST ATTEMPT
+  # FIRST
   #
   # def films
   #   sql = "
@@ -85,12 +85,33 @@ class Customer
       results.map {|screening| Screening.new(screening)}
   end
 
+  # def number_of_tickets_bought
+  #   screenings.count
+  # end
+  #
+  # def number_of_film_seen
+  #   films.count
+  # end
+
   def number_of_tickets_bought
-    screenings.count
+    sql = "
+      SELECT COUNT (*)
+      FROM screenings
+      INNER JOIN tickets ON tickets.customer_id = $1
+      WHERE tickets.screening_id = screenings.id;"
+      values = [@id]
+      results = SqlRunner.run(sql, values).first['count']
   end
 
-  def number_of_film_seen
-    films.count
+  def number_of_films_seen
+    sql = "SELECT COUNT (DISTINCT title)
+    FROM films
+    INNER JOIN tickets ON tickets.customer_id = $1
+    INNER JOIN screenings ON screenings.film_id = films.id
+    WHERE tickets.screening_id = screenings.id;
+    "
+    values = [@id]
+    results = SqlRunner.run(sql, values).first['count']
   end
 
   def self.find_by_id(id)

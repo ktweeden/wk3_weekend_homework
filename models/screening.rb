@@ -3,7 +3,7 @@ require_relative('../db/sql_runner.rb')
 class Screening
 
   attr_reader :id
-  attr_accessor :film_id, :show_time, :max_tickets
+  attr_accessor :film_id, :show_time
 
   MAX_TICKETS = 5
 
@@ -11,7 +11,6 @@ class Screening
     @id = options['id'].to_i if options['id']
     @film_id = options['film_id']
     @show_time = options['show_time']
-    @max_tickets = MAX_TICKETS
   end
 
   def save
@@ -30,12 +29,11 @@ class Screening
 
   def number_of_tickets_bought
     sql = "
-      SELECT * FROM tickets
-      WHERE tickets.screening_id = $1
+      SELECT COUNT (*) FROM tickets
+      WHERE tickets.screening_id = $1;
     "
     values = [@id]
-    results = SqlRunner.run(sql, values)
-    results.count
+    result = SqlRunner.run(sql, values).first['count']
   end
 
   def self.find_by_id(id)

@@ -15,7 +15,7 @@ class Ticket
     customer = Customer.find_by_id(@customer_id)
     screening = Screening.find_by_id(@screening_id)
     return nil if customer.funds < get_price_of_film
-    return nil if screening.number_of_tickets_bought == screening.max_tickets
+    return nil if screening.number_of_tickets_bought == Screening::MAX_TICKETS
     customer.reduce_funds(get_price_of_film)
     sql = "INSERT INTO tickets
     (

@@ -49,14 +49,28 @@ class Film
     results.map  {|customer| Customer.new(customer)}
   end
 
+  # FIRST
+  #
+  # def number_of_customers_viewing
+  #   customers.count
+  # end
+
   def number_of_customers_viewing
-    customers.count
+    sql = "
+    SELECT COUNT (*)
+    FROM customers
+    INNER JOIN screenings ON screenings.film_id = $1
+    INNER JOIN tickets ON tickets.customer_id = customers.id
+    WHERE tickets.screening_id = screenings.id;
+    "
+    values = [@id]
+    result = SqlRunner.run(sql, values).first['count']
   end
 
   def screenings
     sql = "
     SELECT * FROM screenings
-    WHERE film_id = $1"
+    WHERE film_id = $1;"
     values = [@id]
     results = SqlRunner.run(sql, values)
     results.map {|screening| Screening.new(screening)}
